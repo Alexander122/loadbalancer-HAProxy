@@ -1,16 +1,18 @@
 build:
-	docker build -t user1 .
+	sudo docker build -t user1 .
 swarm-init:
-	docker swarm init
+	sudo docker swarm init
 stack-create:
-	docker stack deploy --compose-file=docker-compose.yml prod
+	sudo docker stack deploy --compose-file=docker-compose.yml user1
 services:
-	docker service ls
+	sudo docker service ls
 build-2:
-	docker build -t awesome:v2 .
+	sudo docker build -t awesome:v2 .
 update-build-2:
-	docker service update --image awesome:v2 prod_awesome
+	sudo docker service update --image awesome:v2 prod_awesome
 scale-service:
-	docker service scale prod_awesome=50
+	sudo docker service scale prod_awesome=50
 remove:
 	sudo docker rm -f $(sudo docker ps -aq)
+remove-all-images:
+	sudo docker rmi --force $(sudo docker images -q)
