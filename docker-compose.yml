@@ -4,9 +4,27 @@ services:
   user1:
    image: oleksandrzakharchuk/user1
    ports:
-     - 8080
+     - 8181
    environment:
      - SERVICE_PORTS=8080
+   deploy:
+     replicas: 20
+     update_config:
+       parallelism: 5
+       delay: 10s
+     restart_policy:
+       condition: on-failure
+       max_attempts: 3
+       window: 120s
+   networks:
+     - web
+
+  user2:
+   image: oleksandrzakharchuk/user2
+   ports:
+     - 1937
+   environment:
+     - SERVICE_PORTS=1937
    deploy:
      replicas: 20
      update_config:
@@ -23,12 +41,14 @@ services:
     image: dockercloud/haproxy
     depends_on:
       - user1
+      - user2
     environment:
       - BALANCE=leastconn
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - 80:80
+      - 81:81
+      - 1937:1937
     networks:
       - web
     deploy:
